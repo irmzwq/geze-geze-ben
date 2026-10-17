@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gezegenleri Tanıyalım</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;--bg:#EEF0FF;--ink:#1F1D3D;--mute:#58567D;--card:#fff;--line:#BFC3EE;--acc:#5B4BFF;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17163A;--ink:#EEF0FF;--mute:#B0AFDB;--card:#23224F;--line:#3E3D7C;--acc:#A59DFF}}
+:root[data-theme="dark"]{--bg:#17163A;--ink:#EEF0FF;--mute:#B0AFDB;--card:#23224F;--line:#3E3D7C;--acc:#A59DFF}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.05rem/1.55 Nunito,system-ui,sans-serif}
+main{max-width:900px;margin:0 auto;padding:28px 18px 48px}
+h1,h2{font-family:Fredoka,system-ui,sans-serif;font-weight:700;margin:0;line-height:1.1}
+h1{font-size:clamp(2rem,7vw,3.4rem)}
+.sub{color:var(--mute);margin:10px 0 26px;max-width:52ch}
+.wrap{overflow-x:auto;padding:6px 4px 4px}
+.string{position:relative;min-width:620px;display:flex;justify-content:space-between;align-items:flex-start}
+.string::before{content:"";position:absolute;left:0;right:0;top:50px;height:2px;background:var(--line)}
+.item{position:relative;background:none;border:0;padding:0;color:var(--ink);font:700 .95rem Nunito,sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px}
+.box{height:100px;display:grid;place-items:center}
+.dot{position:relative;display:block;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--c1),var(--c2));transition:transform .2s}
+.item:hover .dot{transform:scale(1.12)}
+.item[aria-pressed="true"] .dot{outline:3px solid var(--ink);outline-offset:5px}
+.item:focus-visible{outline:3px solid var(--acc);outline-offset:4px;border-radius:12px}
+.ring::after{content:"";position:absolute;width:195%;height:46%;left:-47%;top:27%;border:5px solid #CDB98A;border-radius:50%;transform:rotate(-16deg)}
+.card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:22px;margin-top:22px}
+.detail{display:grid;grid-template-columns:220px 1fr;gap:22px;align-items:center}
+.stage{height:220px;display:grid;place-items:center}
+.big{position:relative;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--c1),var(--c2));transition:width .35s,height .35s}
+h2{font-size:2rem}
+.lead{margin:8px 0 14px}
+dl{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin:0}
+dt{color:var(--mute);font-size:.88rem}
+dd{margin:0;font-weight:700}
+.calc{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center}
+.calc label{font-weight:700}
+input{font:700 1.2rem Nunito,sans-serif;width:6em;padding:8px 12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.out{font:700 1.7rem Fredoka,sans-serif}
+.note{color:var(--mute);font-size:.92rem;margin:10px 0 0}
+#orb{display:block;width:100%;max-width:560px;margin:10px auto}
+.card h2.sm{font-size:1.5rem}
+.ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
+.btn{font:700 .95rem Nunito,sans-serif;padding:8px 16px;border-radius:999px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.btn[aria-pressed="true"],#play{background:var(--acc);border-color:var(--acc);color:var(--card)}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+input[type=range]{flex:1;min-width:180px;width:auto;padding:0;border:0;background:none;accent-color:var(--acc)}
+.out2{font:700 1.3rem Fredoka,sans-serif;margin:12px 0 0}
+.turns{list-style:none;padding:0;margin:12px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px 14px;font-size:.92rem}
+select{font:700 1rem Nunito,sans-serif;padding:8px 10px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+#arena{display:block;width:100%;max-width:560px;margin:12px auto 0;border-radius:16px;background:var(--bg)}
+#fire{background:var(--acc);border-color:var(--acc);color:var(--card)}
+#verdict{font-weight:700;margin:8px 0 0;min-height:1.5em}
+.credit{display:flex;justify-content:center;align-items:center;gap:8px;color:var(--mute);font:500 1rem Fredoka,system-ui,sans-serif;margin:32px 0 0}
+@media(max-width:640px){.detail{grid-template-columns:1fr}.stage{height:190px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<h1>Gezegenleri tanıyalım</h1>
+<p class="sub">Bir gezegene dokun, bilgilerini oku. Sonra orada kaç kilo geleceğini hesapla.</p>
+<div class="wrap"><div class="string" id="string"></div></div>
+<section class="card detail" aria-live="polite">
+  <div class="stage"><div class="big" id="big"></div></div>
+  <div>
+    <h2 id="name"></h2>
+    <p class="lead" id="desc"></p>
+    <dl id="facts"></dl>
+  </div>
+</section>
+<section class="card">
+  <div class="calc">
+    <label for="kg">Dünya’da kaç kilosun?</label>
+    <input id="kg" type="number" min="1" max="200" value="40" inputmode="decimal">
+    <div class="out" id="out"></div>
+  </div>
+  <p class="note">Kütlen her yerde aynıdır. Ama yerçekimi gezegene göre değiştiği için tartı farklı bir sayı gösterir.</p>
+</section>
+<section class="card">
+  <h2 class="sm">Güneş’in etrafında dolanma</h2>
+  <p class="note">Çubuğu sağa sola kaydır ya da Başlat’a bas. Her gezegen kendi dolanma süresine göre döner. Uzaklıklar gerçek oranda değildir. Bakış açısı çubuğuyla yörüngelere yukarıdan ya da yandan bak. Bir gezegen seç, Yakınlaştır çubuğunu sağa çek; kamera gezegeni takip eder. Mars ile Jüpiter arasındaki küçük taşlar asteroit kuşağıdır. Gezegenler kendi etraflarında da döner; Venüs ve Uranüs ters yöne döner. Dönüş hızları görünsün diye ayarlandı, gerçek oran değildir ama sıra aynıdır: Jüpiter en hızlı, Venüs en yavaş döner.</p>
+  <svg id="orb" viewBox="0 0 560 440" role="img" aria-label="Gezegenlerin Güneş’in etrafındaki yörüngeleri"></svg>
+  <div class="ctl">
+    <button class="btn" id="play">Başlat</button>
+    <input id="t" type="range" min="0" max="1" step="any" value="0" aria-label="Geçen süre">
+  </div>
+  <div class="ctl">
+    <label for="tilt" style="font-weight:700">Bakış açısı</label>
+    <input id="tilt" type="range" min="45" max="80" value="65">
+  </div>
+  <div class="ctl">
+    <label for="zoom" style="font-weight:700">Yakınlaştır</label>
+    <input id="zoom" type="range" min="0" max="100" value="0">
+  </div>
+  <div class="ctl">
+    <button class="btn rg" data-y="1" aria-pressed="true">1 yıl</button>
+    <button class="btn rg" data-y="12" aria-pressed="false">12 yıl</button>
+    <button class="btn rg" data-y="165" aria-pressed="false">165 yıl</button>
+  </div>
+  <p class="out2" id="tl"></p>
+  <ul class="turns" id="turns"></ul>
+</section>
+<section class='card'>
+  <h2 class='sm'>Çarpışma testi</h2>
+  <p class='note'>Bir gezegeni diğerine fırlat ve hasarı gör. Hız arttıkça çarpışma şiddetlenir. Hasarı kütleye ve çekim bağına göre yaklaşık hesaplıyoruz. Küçük gezegen genelde daha çok kırılır; büyükleri kırmak için çok hız gerekir.</p>
+  <div class='ctl'>
+    <label for='pa' style='font-weight:700'>Fırlatılan</label><select id='pa'></select>
+    <label for='pb' style='font-weight:700'>Hedef</label><select id='pb'></select>
+  </div>
+  <div class='ctl'>
+    <label for='spd' style='font-weight:700'>Hız</label>
+    <input id='spd' type='range' min='5' max='70' value='25'>
+    <span id='spv' style='font-weight:700'>25 km/sn</span>
+  </div>
+  <svg id='arena' viewBox='0 0 560 240' role='img' aria-label='Çarpışma testi alanı'></svg>
+  <div class='ctl'><button class='btn' id='fire'>Fırlat</button><span class='out2' id='res'></span></div>
+  <p id='verdict' aria-live='polite'></p>
+  <p class='note' id='score'></p>
+</section>
+<p class='credit'><svg viewBox='0 0 32 32' width='24' height='24' aria-hidden='true'><g transform='rotate(-20 16 16)' fill='none'><path d='M1.5 16A14.5 5 0 0 1 30.5 16' stroke='#1B2A6B' stroke-width='2.4'/><circle cx='16' cy='16' r='8' fill='#1B2A6B' stroke='#9AA5FF' stroke-width='.7'/><path d='M1.5 16A14.5 5 0 0 0 30.5 16' style='stroke:var(--bg)' stroke-width='5'/><path d='M1.5 16A14.5 5 0 0 0 30.5 16' stroke='#1B2A6B' stroke-width='2.4'/></g></svg>Created by Irmak</p>
+</main>
+<script>
+const P=[
+{n:"Merkür",c:["#E3DCD2","#8A8176"],r:.38,g:.38,cap:"4.879 km",d:"58 milyon km",y:"88 Dünya günü",gn:"59 Dünya günü",u:"0",s:"−180 ile 430 °C",t:"Güneş’e en yakın ve en küçük gezegen. Atmosferi neredeyse yok, bu yüzden geceleri çok soğur."},
+{n:"Venüs",c:["#F6D79B","#C98A3C"],r:.95,g:.91,cap:"12.104 km",d:"108 milyon km",y:"225 Dünya günü",gn:"243 Dünya günü",u:"0",s:"yaklaşık 465 °C",t:"Kalın bulutları ısıyı hapseder; Merkür’den bile daha sıcaktır. Diğer gezegenlerin çoğunun tersi yönde döner."},
+{n:"Dünya",c:["#7FC8FF","#2B6BB8"],r:1,g:1,cap:"12.756 km",d:"150 milyon km",y:"365 gün",gn:"24 saat",u:"1",s:"ortalama 15 °C",t:"Yaşamın bilindiği tek gezegen. Yüzeyinin büyük kısmı su ile kaplıdır."},
+{n:"Mars",c:["#F3A07C","#B2492A"],r:.53,g:.38,cap:"6.792 km",d:"228 milyon km",y:"687 Dünya günü",gn:"24,6 saat",u:"2",s:"ortalama −60 °C",t:"Toprağındaki demir paslandığı için kızıl görünür. Üzerinde robot araçlar dolaşıyor."},
+{n:"Jüpiter",c:["#F2D9B8","#B9835A"],r:11.2,g:2.53,cap:"142.984 km",d:"778 milyon km",y:"12 Dünya yılı",gn:"10 saat",u:"90’dan fazla",s:"yaklaşık −110 °C",t:"En büyük gezegen. İçine 1.300’den fazla Dünya sığar. Büyük Kırmızı Leke yüzyıllardır süren bir fırtınadır."},
+{n:"Satürn",c:["#F4E2B0","#C2A15F"],r:9.45,g:1.07,cap:"120.536 km",d:"1,43 milyar km",y:"29 Dünya yılı",gn:"10,7 saat",u:"140’tan fazla",s:"yaklaşık −140 °C",t:"Halkaları buz ve kaya parçalarından oluşur. Yoğunluğu sudan azdır; yeterince büyük bir havuzda yüzerdi.",ring:1},
+{n:"Uranüs",c:["#BFF0F2","#58AFC0"],r:4,g:.89,cap:"51.118 km",d:"2,87 milyar km",y:"84 Dünya yılı",gn:"17 saat",u:"28",s:"yaklaşık −195 °C",t:"Yan yatmış şekilde döner, sanki yuvarlanıyor gibidir. Buz devi olarak sınıflanır."},
+{n:"Neptün",c:["#8FA8FF","#3047B8"],r:3.88,g:1.14,cap:"49.528 km",d:"4,5 milyar km",y:"165 Dünya yılı",gn:"16 saat",u:"16",s:"yaklaşık −200 °C",t:"Güneş’e en uzak gezegen. Güneş Sistemi’nin en hızlı rüzgârları burada eser."}
+];
+const $=id=>document.getElementById(id);
+const px=(r,a,b)=>Math.round(a+Math.sqrt(r)*b);
+let cur=2;
+const fmt=x=>x.toLocaleString("tr-TR",{maximumFractionDigits:1});
+function paint(el,p){el.style.setProperty("--c1",p.c[0]);el.style.setProperty("--c2",p.c[1]);el.classList.toggle("ring",!!p.ring)}
+P.forEach((p,i)=>{
+  const b=document.createElement("button");
+  b.className="item";b.setAttribute("aria-pressed",i===cur);
+  const s=px(p.r,20,16);
+  b.innerHTML='<span class="box"><span class="dot" style="width:'+s+'px;height:'+s+'px"></span></span><span>'+p.n+'</span>';
+  paint(b.querySelector(".dot"),p);
+  b.onclick=()=>{cur=i;show()};
+  $("string").appendChild(b);
+});
+function show(){
+  const p=P[cur];
+  document.querySelectorAll(".item").forEach((b,i)=>b.setAttribute("aria-pressed",i===cur));
+  const s=px(p.r,70,30);
+  const big=$("big");big.style.width=big.style.height=s+"px";paint(big,p);
+  big.innerHTML="";
+  const sv=mk("svg",{viewBox:"-1 -1 2 2",style:"position:absolute;inset:0;width:100%;height:100%"},big);
+  const bc=mk("clipPath",{id:"bc"},mk("defs",{},sv));mk("circle",{r:1},bc);
+  const bg=mk("g",{"clip-path":"url(#bc)"},sv);
+  BG=[mk("g",{},bg),mk("g",{},bg)];det(cur,1,BG[0]);det(cur,1,BG[1]);
+  mk("circle",{r:1,fill:"url(#shade)"},sv);st0=performance.now()/1000;
+  $("name").textContent=p.n;$("desc").textContent=p.t;
+  const rows=[["Çap",p.cap+" (Dünya’nın "+fmt(p.r)+" katı)"],["Güneş’e uzaklık",p.d],["Bir yıl",p.y],["Bir gün",p.gn],["Uydu sayısı",p.u],["Sıcaklık",p.s]];
+  $("facts").innerHTML=rows.map(r=>"<div><dt>"+r[0]+"</dt><dd>"+r[1]+"</dd></div>").join("");
+  calc();draw();
+}
+function calc(){
+  const p=P[cur],k=parseFloat($("kg").value);
+  $("out").textContent=isNaN(k)||k<=0?"Bir sayı yaz":p.n+"’de "+fmt(k*p.g)+" kg gelirsin";
+}
+$("kg").addEventListener("input",calc);
+const D=[88,225,365.25,687,4333,10759,30687,60190],RR=[48,78,108,138,172,202,232,262];
+const NS="http://www.w3.org/2000/svg",svg=$("orb"),sl=$("t");
+const mk=(t,a,par)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(par||svg).appendChild(e);return e};
+const defs=mk("defs",{});
+P.forEach((p,i)=>{const g=mk("radialGradient",{id:"g"+i,cx:".3",cy:".3",r:".8"},defs);mk("stop",{offset:"0","stop-color":p.c[0]},g);mk("stop",{offset:"1","stop-color":p.c[1]},g)});
+const CY=220;
+const sh0=mk("radialGradient",{id:"shade",cx:".35",cy:".35",r:".75"},defs);
+mk("stop",{offset:".5","stop-color":"#000","stop-opacity":"0"},sh0);
+mk("stop",{offset:"1","stop-color":"#000","stop-opacity":".4"},sh0);
+const DT=[
+ [["c",-.35,-.3,.2,"#000",.15],["c",.3,.1,.28,"#000",.13],["c",-.1,.5,.14,"#000",.15],["c",.5,-.5,.12,"#000",.12]],
+ [["b",-.5,.18,"#fff",.25],["b",-.05,.22,"#8a4b00",.18],["b",.4,.15,"#fff",.22],["e",-.4,-.3,.25,.09,"#fff",.4],["e",.35,.15,.2,.08,"#8a4b00",.3],["e",-.1,.6,.25,.07,"#fff",.35]],
+ [["e",-.3,-.1,.4,.3,"#3E9B52",.9],["e",.45,.3,.3,.35,"#3E9B52",.9],["e",0,-.92,.5,.14,"#fff",.9],["e",.1,.45,.5,.07,"#fff",.5],["e",-.2,-.5,.45,.06,"#fff",.5]],
+ [["e",-.25,.1,.4,.18,"#000",.2],["c",.35,-.2,.22,"#000",.18],["e",0,-.92,.45,.14,"#fff",.85]],
+ [["b",-.65,.14,"#fff",.3],["b",-.3,.18,"#8a4a24",.28],["b",.05,.15,"#fff",.28],["b",.4,.2,"#8a4a24",.25],["e",.35,.35,.2,.11,"#C0452B",.85]],
+ [["b",-.5,.15,"#fff",.25],["b",-.1,.2,"#8a6a2a",.2],["b",.35,.15,"#fff",.22],["e",-.45,-.3,.2,.08,"#fff",.55],["e",.4,.05,.16,.07,"#5a3d10",.4],["e",-.1,.6,.22,.07,"#fff",.45],["e",.55,-.55,.12,.05,"#5a3d10",.35]],
+ [["b",-.1,.25,"#fff",.25],["e",0,-.9,.5,.2,"#fff",.2],["e",-.4,.3,.18,.07,"#fff",.45],["e",.35,-.35,.16,.06,"#2a7f93",.35],["e",.1,.65,.2,.06,"#fff",.35]],
+ [["b",-.4,.12,"#fff",.2],["b",.2,.15,"#001a66",.25],["e",-.3,0,.22,.12,"#001a66",.5]]
+];
+function det(i,s,par){
+  DT[i].forEach(d=>{
+    if(d[0]==="b")mk("rect",{x:-s,y:d[1]*s,width:2*s,height:d[2]*s,fill:d[3],opacity:d[4]},par);
+    else if(d[0]==="c")mk("circle",{cx:d[1]*s,cy:d[2]*s,r:d[3]*s,fill:d[4],opacity:d[5]},par);
+    else mk("ellipse",{cx:d[1]*s,cy:d[2]*s,rx:d[3]*s,ry:d[4]*s,fill:d[5],opacity:d[6]},par);
+  });
+}
+const gl=mk("radialGradient",{id:"glow"},defs);
+mk("stop",{offset:"0","stop-color":"#FFC93C","stop-opacity":".9"},gl);
+mk("stop",{offset:"1","stop-color":"#FFC93C","stop-opacity":"0"},gl);
+const ell=P.map((p,i)=>mk("ellipse",{cx:280,cy:CY,rx:RR[i],fill:"none",stroke:"var(--line)","stroke-width":1.5,"vector-effect":"non-scaling-stroke"}));
+const back=mk("g",{}),sun=mk("g",{}),front=mk("g",{});
+mk("circle",{cx:280,cy:CY,r:62,fill:"url(#glow)"},sun);
+mk("circle",{cx:280,cy:CY,r:24,fill:"#FFC93C"},sun);
+const bodies=P.map((p,i)=>{
+  const s=3.5+Math.sqrt(p.r)*1.5,g=mk("g",{style:"cursor:pointer"},back);
+  const halo=mk("circle",{r:s+5,fill:"none",stroke:"var(--ink)","stroke-width":2},g);
+  mk("circle",{r:s,fill:"url(#g"+i+")"},g);
+  const cp=mk("clipPath",{id:"cp"+i},defs);mk("circle",{r:s},cp);
+  const dc=mk("g",{"clip-path":"url(#cp"+i+")"},g),d1=mk("g",{},dc),d2=mk("g",{},dc);
+  det(i,s,d1);det(i,s,d2);
+  mk("circle",{r:s,fill:"url(#shade)"},g);
+  if(p.ring)mk("ellipse",{rx:s*1.9,ry:s*.5,fill:"none",stroke:"#CDB98A","stroke-width":s*.18,transform:"rotate(-16)"},g);
+  halo.setAttribute("vector-effect","non-scaling-stroke");
+  mk("circle",{r:s+8,fill:"transparent"},g);
+  g.onclick=()=>{cur=i;show()};
+  return {g,halo,side:0,d1,d2,s};
+});
+const RK=[];
+for(let k=0;k<70;k++){
+  const R=148+Math.random()*16,s=.8+Math.random()*1.4;
+  RK.push({e:mk('circle',{r:s,fill:k%3?'#A39A8E':'#7F776B'},back),R,s,per:1200+Math.random()*900,ph:Math.random()*6.283,side:0});
+}
+const world=mk("g",{});
+[...svg.children].forEach(c=>{if(c!==defs&&c!==world)world.appendChild(c)});
+const f2=x=>x.toLocaleString("tr-TR",{maximumFractionDigits:2});
+let st0=0,BG=[];
+const TB=[];
+document.querySelectorAll('.item .dot').forEach((dot,i)=>{
+  const sv=mk('svg',{viewBox:'-1 -1 2 2',style:'position:absolute;inset:0;width:100%;height:100%'},dot);
+  const cp=mk('clipPath',{id:'bd'+i},mk('defs',{},sv));mk('circle',{r:1},cp);
+  const gg=mk('g',{'clip-path':'url(#bd'+i+')'},sv),d1=mk('g',{},gg),d2=mk('g',{},gg);
+  det(i,1,d1);det(i,1,d2);mk('circle',{r:1,fill:'url(#shade)'},sv);
+  d2.setAttribute('transform','translate(-2,0)');
+  TB.push({d1,d2,x:0});
+});
+const SP=[25,-41,6,6.1,4.4,4.5,-5.3,5.2];
+function spin(ts){
+  const t=ts/1000;
+  bodies.forEach((b,i)=>{
+    const f=((t/Math.abs(SP[i]))*Math.sign(SP[i])%1+1)%1,tx=f*2*b.s;
+    b.d1.setAttribute('transform','translate('+tx+',0)');
+    b.d2.setAttribute('transform','translate('+(tx-2*b.s)+',0)');
+  });
+  const sf=((t-st0)/3*Math.sign(SP[cur])%1+1)%1,tx=sf*2;
+  if(BG[0]){BG[0].setAttribute('transform','translate('+tx+',0)');BG[1].setAttribute('transform','translate('+(tx-2)+',0)')}
+  TB.forEach((b,i)=>{
+    const x=i===cur?tx:0;
+    if(b.x!==x){b.x=x;b.d1.setAttribute('transform','translate('+x+',0)');b.d2.setAttribute('transform','translate('+(x-2)+',0)')}
+  });
+  requestAnimationFrame(spin);
+}
+if(!matchMedia('(prefers-reduced-motion:reduce)').matches)requestAnimationFrame(spin);
+let rng=1,raf=0,last=0;
+function draw(){
+  const yr=+sl.value,days=yr*365.25;
+  const T=+$("tilt").value*Math.PI/180,ct=Math.cos(T),st=Math.sin(T);
+  bodies.forEach((b,i)=>{
+    const a=2*Math.PI*days/D[i]-Math.PI/2,y=RR[i]*Math.sin(a),f=1+y*st/900;
+    ell[i].setAttribute("ry",RR[i]*ct);
+    b.x=280+RR[i]*Math.cos(a);b.y=CY+y*ct;
+    b.g.setAttribute("transform","translate("+b.x+","+b.y+") scale("+f+")");
+    b.g.style.opacity=y<0?.8:1;
+    const side=y>=0?1:0;
+    if(side!==b.side){b.side=side;(side?front:back).appendChild(b.g)}
+    b.halo.style.opacity=i===cur?1:0;
+  });
+  RK.forEach(r=>{
+    const a=2*Math.PI*days/r.per+r.ph,y=r.R*Math.sin(a),sd=y>=0?1:0;
+    r.e.setAttribute('cx',280+r.R*Math.cos(a));r.e.setAttribute('cy',CY+y*ct);
+    r.e.setAttribute('r',r.s*(1+y*st/900));r.e.setAttribute('opacity',sd?1:.7);
+    if(sd!==r.side){r.side=sd;(sd?front:back).appendChild(r.e)}
+  });
+  const z=Math.pow(20,+$("zoom").value/100),w=Math.min(1,(z-1)/2),sb=bodies[cur];
+  const fx=280+(sb.x-280)*w,fy=CY+(sb.y-CY)*w;
+  world.setAttribute("transform","translate(280,"+CY+") scale("+z+") translate("+(-fx)+","+(-fy)+")");
+  $("tl").textContent="Geçen süre: "+f2(yr)+" Dünya yılı"+(z>1.05?" · "+P[cur].n+" "+f2(z)+" kat yakın":"");
+  $("turns").innerHTML=P.map((p,i)=>"<li><b>"+p.n+"</b> "+f2(days/D[i])+" tur</li>").join("");
+}
+function stop(){cancelAnimationFrame(raf);raf=0;$("play").textContent="Başlat"}
+function tick(ts){
+  const dt=(ts-last)/1000;last=ts;
+  sl.value=+sl.value+rng/14*dt;
+  draw();
+  if(+sl.value>=rng){stop();return}
+  raf=requestAnimationFrame(tick);
+}
+$("play").onclick=()=>{
+  if(raf){stop();return}
+  if(+sl.value>=rng)sl.value=0;
+  $("play").textContent="Durdur";last=performance.now();raf=requestAnimationFrame(tick);
+};
+sl.addEventListener("input",()=>{stop();draw()});
+$("tilt").addEventListener("input",draw);
+$("zoom").addEventListener("input",draw);
+document.querySelectorAll(".rg").forEach(b=>b.onclick=()=>{
+  rng=+b.dataset.y;sl.max=rng;sl.value=0;stop();
+  document.querySelectorAll(".rg").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  draw();
+});
+const M=[.055,.815,1,.107,317.8,95.2,14.5,17.1];
+const pa=$('pa'),pb=$('pb'),AR=$('arena'),BX=430;
+P.forEach((p,i)=>{pa.add(new Option(p.n,i));pb.add(new Option(p.n,i))});
+pa.value=4;pb.value=2;
+const U=i=>0.6*6.674e-11*Math.pow(M[i]*5.972e24,2)/(P[i].r*6.371e6);
+const rad=i=>Math.round(16+Math.sqrt(P[i].r)*10);
+let ac=0,busy=0,best=0,tries=0,gA,gB;
+function ball(i,s){
+  const g=mk('g',{},AR);
+  mk('circle',{r:s,fill:'url(#g'+i+')'},g);
+  const id='ac'+(ac++),cp=mk('clipPath',{id},g);mk('circle',{r:s},cp);
+  det(i,s,mk('g',{'clip-path':'url(#'+id+')'},g));
+  if(P[i].ring)mk('ellipse',{rx:s*1.9,ry:s*.5,fill:'none',stroke:'#CDB98A','stroke-width':s*.18,transform:'rotate(-16)'},g);
+  mk('text',{y:s+22,'text-anchor':'middle','font-size':14,'font-weight':700,fill:'var(--mute)'},g).textContent=P[i].n;
+  return g;
+}
+function setup(){
+  AR.innerHTML='';
+  const a=+pa.value,b=+pb.value;
+  gA=ball(a,rad(a));gB=ball(b,rad(b));
+  gA.setAttribute('transform','translate('+(rad(a)+10)+',120)');
+  gB.setAttribute('transform','translate('+BX+',120)');
+}
+pa.onchange=pb.onchange=()=>{if(!busy)setup()};
+$('spd').addEventListener('input',()=>{$('spv').textContent=$('spd').value+' km/sn'});
+const vd=(n,d)=>d<.03?n+': çizik bile yok.':d<.25?n+': yüzeyde krater açıldı.':d<.6?n+': büyük hasar, yüzeyi eridi.':d<.9?n+': neredeyse parçalandı!':n+': paramça oldu!';
+$('fire').onclick=()=>{
+  if(busy)return;busy=1;setup();
+  const a=+pa.value,b=+pb.value,v=+$('spd').value,sa=rad(a),sb=rad(b);
+  const mu=M[a]*M[b]/(M[a]+M[b]),E=.5*mu*5.972e24*Math.pow(v*1000,2);
+  const da=1-Math.exp(-E/U(a)),db=1-Math.exp(-E/U(b)),mx=Math.max(da,db);
+  const x0=sa+10,hit=BX-sb-sa,dur=1500-v*13;
+  const ka=M[b]/(M[a]+M[b]),kb=M[a]/(M[a]+M[b]),m=.3+v/70;
+  $('res').textContent='';$('verdict').textContent='';
+  const crack=(g,s,d)=>{for(let j=0,n=Math.round(d*12);j<n;j++){
+    const an=Math.random()*6.283,r=Math.random()*s*.6;
+    mk('line',{x1:Math.cos(an)*s,y1:Math.sin(an)*s,x2:Math.cos(an)*r+(Math.random()-.5)*s*.3,y2:Math.sin(an)*r+(Math.random()-.5)*s*.3,stroke:'#000','stroke-width':1.5,opacity:.55},g);
+  }};
+  const boom=()=>{
+    const cx=BX-sb,ps=[],sp=2+v/15;
+    const fl=mk('circle',{cx,cy:120,r:0,fill:'#FFE9A8'},AR);
+    crack(gA,sa,da);crack(gB,sb,db);
+    const add=(n,i,sz,x,y,k)=>{for(let j=0;j<n;j++){
+      const an=Math.random()*6.283,s=(.5+Math.random()*1.5)*k;
+      ps.push({e:mk('circle',{r:sz*(.4+Math.random()*.8),fill:P[i].c[j%2]},AR),x,y,vx:Math.cos(an)*s,vy:Math.sin(an)*s});
+    }};
+    add(Math.round(10+50*mx),a,4,cx,120,sp);add(Math.round(10+50*mx),b,4,cx,120,sp);
+    const RM=matchMedia('(prefers-reduced-motion:reduce)').matches,sh=[];
+    const shat=(i,s,x,d,face)=>{
+      const n=3+Math.round(d*12),full=d>.9;
+      for(let k=0;k<n;k++){
+        const a0=full?6.283*k/n:face-1.3+2.6*k/n,a1=full?6.283*(k+1)/n:face-1.3+2.6*(k+1)/n,am=(a0+a1)/2,rm=s*(.7+Math.random()*.3);
+        const q=[[0,0],[Math.cos(a0)*s,Math.sin(a0)*s],[Math.cos(am)*rm,Math.sin(am)*rm],[Math.cos(a1)*s,Math.sin(a1)*s]];
+        const gx=q.reduce((u,p)=>u+p[0],0)/4,gy=q.reduce((u,p)=>u+p[1],0)/4,el=mk('g',{},AR);
+        mk('polygon',{points:q.map(p=>(p[0]-gx).toFixed(1)+','+(p[1]-gy).toFixed(1)).join(' '),fill:P[i].c[k%2],stroke:'rgba(0,0,0,.35)','stroke-width':1},el);
+        const s2=(1+Math.random()*2.2)*sp*.7*(full?1:.8);
+        sh.push({e:el,x:x+gx,y:120+gy,vx:Math.cos(am)*s2,vy:Math.sin(am)*s2-.5,r:Math.random()*360,w:(Math.random()-.5)*16});
+      }
+    };
+    if(da>.9)gA.style.display='none';
+    if(db>.9)gB.style.display='none';
+    shat(a,sa,hit,da,0);shat(b,sb,BX,db,Math.PI);
+    let t0=0;
+    const step=ts=>{
+      if(!t0)t0=ts;
+      const t=Math.min(1,(ts-t0)/2400),e=1-(1-t)*(1-t);
+      gB.setAttribute('transform','translate('+(BX+60*kb*m*e)+',120)');
+      gA.setAttribute('transform','translate('+(hit-60*ka*m*e)+',120)');
+      fl.setAttribute('r',10+(40+60*mx)*e);fl.setAttribute('opacity',Math.max(0,1-t*4));
+      ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vx*=.985;p.vy*=.985;p.e.setAttribute('cx',p.x);p.e.setAttribute('cy',p.y);p.e.setAttribute('opacity',1-t)});
+      sh.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vx*=.975;p.vy=p.vy*.975+.03;p.r+=p.w*(1-t);p.e.setAttribute('transform','translate('+p.x+','+p.y+') rotate('+p.r+')');p.e.setAttribute('opacity',1-.6*t)});
+      if(!RM)AR.style.transform=t<.25?'translate('+((Math.random()-.5)*14*mx)+'px,'+((Math.random()-.5)*14*mx)+'px)':'';
+      if(t<1){requestAnimationFrame(step);return}
+      const sc=Math.round((da+db)*100);best=Math.max(best,sc);tries++;
+      $('res').textContent=P[a].n+' %'+Math.round(da*100)+' · '+P[b].n+' %'+Math.round(db*100)+' hasar';
+      $('verdict').textContent=vd(P[b].n,db)+' '+vd(P[a].n,da);
+      $('score').textContent='Puan: '+sc+' / 200 · Rekor: '+best+' · Deneme: '+tries;
+      busy=0;
+    };
+    requestAnimationFrame(step);
+  };
+  let t0=0;
+  const fly=ts=>{
+    if(!t0)t0=ts;
+    const k=Math.min(1,(ts-t0)/dur);
+    gA.setAttribute('transform','translate('+(x0+(hit-x0)*k*k)+',120)');
+    if(k<1)requestAnimationFrame(fly);else boom();
+  };
+  requestAnimationFrame(fly);
+};
+setup();
+show();
+</script>
+</body>
+</html>
